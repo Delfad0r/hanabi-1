@@ -1,6 +1,7 @@
 import sys
 
 from game.game import Game
+from game.deck import DECK50, DECK55
 
 # TODO: aggiungere opzione -h (help)
 
@@ -17,6 +18,7 @@ if __name__ == "__main__":
     short_log = False
     interactive = False
     quit_immediately = False
+    deck_type = DECK55
     
     repeat = None  # repeat until a bad result is reached
     
@@ -74,6 +76,10 @@ if __name__ == "__main__":
         # quit immediately after showing the initial cards
         quit_immediately = True
     
+    if '--no-rainbow' in sys.argv[1:]:
+        # do not include rainbow cards
+        deck_type = DECK50
+    
     counter = 0
     while True:
         # run game
@@ -86,6 +92,7 @@ if __name__ == "__main__":
                 strategy_log=strategy_log,
                 dump_deck_to=dump_deck_to,
                 load_deck_from=load_deck_from,
+                deck_type=deck_type,
             )
 
         game.setup()
@@ -98,7 +105,7 @@ if __name__ == "__main__":
                 """
                 Print main view.
                 """
-                CURSOR_Y = term.height - 3
+                CURSOR_Y = term.height - 15
                 
                 # clear everything
                 print(term.clear())

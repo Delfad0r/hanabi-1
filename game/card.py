@@ -56,9 +56,6 @@ class CardAppearance:
     def __eq__(self, other):
         # same color and number
         return self.color == other.color and self.number == other.number
-
-    #def __ne__(self, other):
-    #    return self != other
     
     def __le__(self, other):
         return (self.color, self.number) < (other.color, other.number)

@@ -80,8 +80,8 @@ class PublicKnowledge:
     
 class HintManager:
     # COLORS_NUM                0   1   2   3   4   5   6
-    PLAYABLE_CARDS_NUM =    [   0,  4,  4,  4,  3,  2,  2]
-    TRASH_CARDS_NUM =       [   4,  3,  3,  2,  2,  2,  2]
+    PLAYABLE_CARDS_NUM =    [   0,  4,  4,  4,  3,  3,  2]
+    TRASH_CARDS_NUM =       [   4,  3,  3,  2,  2,  0,  2]
     
     def __init__(self, public_knowledge):
         self.pk = public_knowledge
@@ -139,14 +139,15 @@ class HintManager:
                         unplayable[c.color] = c.number
                 my_ci[i].possible_cards -= {CardAppearance(c, n) for c, n in unplayable.items()}
             trash_cards = self.encode_trash_cards()
-            for i, b in zip(cards, format(number - len(cols) * playable_num, '0%db' % min(len(cards), trash_num))):
-                if b == '1':
-                    # trash
-                    my_ci[i].possible_cards &= trash_cards
-                else:
-                    # not trash
-                    my_ci[i].possible_cards -= trash_cards
-                my_ci[i].last_hinted = turn
+            if trash_num > 0:
+                for i, b in zip(cards, format(number - len(cols) * playable_num, '0%db' % min(len(cards), trash_num))):
+                    if b == '1':
+                        # trash
+                        my_ci[i].possible_cards &= trash_cards
+                    else:
+                        # not trash
+                        my_ci[i].possible_cards -= trash_cards
+                    my_ci[i].last_hinted = turn
     
     def update_public_knowledge(self, hinter, hint, player_id, hands):
         assert hint.type == Action.HINT
@@ -206,6 +207,8 @@ class HintManager:
             if hand[j].number ==  min([6] + [c.number for c in self.pk.card_info[player_id][j].possible_cards if c.matches(hand[j].color, None) and c in self.pk.useful]):
                 return len(cols) * i + cols.index(hand[j].color)
         trash_cards = self.encode_trash_cards()
+        if trash_num == 0:
+            return 15
         return len(cols) * playable_num + int(''.join('1' if hand[c] in trash_cards else '0' for c in cards[: trash_num]), base = 2)
 
 
@@ -237,7 +240,8 @@ class Strategy(BaseStrategy):
             #    self.useless_hints = 0
             self.pk = new_pk
         else:
-            self.useless_hints = 0
+            if action.type == Action.DISCARD and self.next_player_id() == player_id and any(c.playable(self.board) for c in self.hands[player_id] if c is not None) and self.verbose:
+                print(('Player {} had a playable card but didn\'t play'.format(player_id)))
             self.pk.reset_knowledge(player_id, action.card_pos)
             for i, h in self.hands.items():
                 for j, c in enumerate(h):

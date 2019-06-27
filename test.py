@@ -5,6 +5,7 @@
 import sys
 
 from game.game import Game
+from game.deck import DECK50, DECK55
 
 
 if __name__ == "__main__":
@@ -13,6 +14,7 @@ if __name__ == "__main__":
     ai_params = {}
     num_players = 5
     num_simulations = 1000
+    deck_type = DECK55
     
     
     if '-a' in sys.argv[1:]:
@@ -39,6 +41,10 @@ if __name__ == "__main__":
         assert len(sys.argv) >= i+2
         ai_params['difficulty'] = sys.argv[i+1]
     
+    if '--no-rainbow' in sys.argv[1:]:
+        # do not include rainbow cards
+        deck_type = DECK50
+    
     results = []
 
     print("Starting %d simulations with %d players..." % (num_simulations, num_players))
@@ -51,6 +57,7 @@ if __name__ == "__main__":
                 strategy_log=False,
                 dump_deck_to='deck.txt',
                 load_deck_from=None,
+                deck_type=deck_type,
             )
         
         game.setup()

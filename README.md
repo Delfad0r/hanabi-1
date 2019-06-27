@@ -28,6 +28,7 @@ Run a new game
 * `-r SCORE` run many games, until a score <= to the given score is reached
 * `-i` run in interactive mode
 * `-q` quit immediately after showing the initial cards (not in interactive mode)
+* `--no-rainbow` do not include Rainbow cards in the deck
 
 
 
@@ -42,6 +43,7 @@ or (much faster)`pypy test.py`
 * `-m NUM_GAMES` set number of games (default is 1000)
 * `-a AI_DIRECTORY` choose AI (default is `alphahanabi`)
 * `-p DIFFICULTY` choose difficulty level for `alphahanabi` (possible values: `moderate`, `hard`, `hardest`; default is `hardest`)
+* `--no-rainbow` do not include Rainbow cards in the deck
 
 
 
