@@ -77,8 +77,8 @@ if __name__ == "__main__":
     counter = 0
     while True:
         # run game
-        print "Starting game with %d players..." % num_players
-        print
+        print("Starting game with %d players..." % num_players)
+        print()
         game = Game(
                 num_players=num_players,
                 ai=ai,
@@ -101,21 +101,21 @@ if __name__ == "__main__":
                 CURSOR_Y = term.height - 3
                 
                 # clear everything
-                print term.clear()
+                print(term.clear())
                 
                 # move cursor
-                print term.move_y(CURSOR_Y)
+                print(term.move_y(CURSOR_Y))
                 
                 with term.location(y=0):
-                    print term.bold("Hanabi game")
+                    print(term.bold("Hanabi game"))
                 
                 with term.location(y=2):
-                    print "Number of players: %d" % num_players
-                    print "AI: %s" % ai
+                    print("Number of players: %d" % num_players)
+                    print("AI: %s" % ai)
                     if "difficulty" in ai_params:
-                        print "Difficulty: %s" % ai_params["difficulty"]
+                        print("Difficulty: %s" % ai_params["difficulty"])
                     if load_deck_from is not None:
-                        print "Deck file: %s" % load_deck_from
+                        print("Deck file: %s" % load_deck_from)
                 
                 if turn is not None:
                     # log turn
@@ -135,8 +135,8 @@ if __name__ == "__main__":
                 if statistics is not None:
                     # game ended
                     with term.location(y=9+10):
-                        print term.bold("Game ended")
-                        print statistics
+                        print(term.bold("Game ended"))
+                        print(statistics)
             
             
             term = Terminal()
@@ -145,7 +145,7 @@ if __name__ == "__main__":
                 
                 for current_player, turn in game.run_game():
                     if wait_key:
-                        cmd = raw_input(":")
+                        cmd = input(":")
                         if cmd in ["c", "continue"]:
                             wait_key = False
                     
@@ -156,7 +156,7 @@ if __name__ == "__main__":
                 print_main(term, num_players, ai, ai_params, short_log, turn=turn, current_player=current_player, statistics=statistics)
                 
                 while True:
-                    cmd = raw_input(":")
+                    cmd = input(":")
                     print_main(term, num_players, ai, ai_params, short_log, turn=turn, current_player=current_player, statistics=statistics)
                     
                     if cmd in ["q", "quit"]:
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         else:
             # non-interactive mode
             if dump_deck_to is not None:
-                print "Dumping initial deck to %s" % dump_deck_to
+                print("Dumping initial deck to %s" % dump_deck_to)
             
             if not short_log:
                 game.log_deck()
@@ -183,7 +183,7 @@ if __name__ == "__main__":
             # now run the game
             for current_player, turn in game.run_game():
                 if wait_key:
-                    raw_input()
+                    input()
                 
                 if short_log:
                     game.log_turn_short(turn, current_player)
@@ -193,7 +193,7 @@ if __name__ == "__main__":
                     game.log_status()
             
             statistics = game.statistics
-            print statistics
+            print(statistics)
         
         
         counter += 1
@@ -202,12 +202,12 @@ if __name__ == "__main__":
             break
         
         elif statistics.score <= repeat:
-            print "Reached score <= %d after %d games" % (repeat, counter)
+            print("Reached score <= %d after %d games" % (repeat, counter))
             break
         
         else:
-            print
-            print "=========================="
-            print
+            print()
+            print("==========================")
+            print()
 
 

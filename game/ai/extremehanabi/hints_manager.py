@@ -37,14 +37,14 @@ class BaseHintsManager(object):
         Says if the given card is owned by some player who knows everything about it.
         """
         # check other players' hands
-        for (player_id, hand) in self.strategy.hands.iteritems():
-            for card_pos in xrange(self.k):
+        for (player_id, hand) in self.strategy.hands.items():
+            for card_pos in range(self.k):
                 kn = self.knowledge[player_id][card_pos]
                 if kn.knows_exactly() and hand[card_pos] is not None and hand[card_pos].equals(card):
                     return True
         
         # check my hand
-        for card_pos in xrange(self.k):
+        for card_pos in range(self.k):
             kn = self.knowledge[self.id][card_pos]
             if kn.knows_exactly() and any(card.equals(c) for c in self.strategy.possibilities[card_pos]):
                 return True
@@ -152,7 +152,7 @@ class SumBasedHintsManager(BaseHintsManager):
         Compute the sum of the hashes of the hands of the other players, excluding the hinter and myself.
         """
         res = 0
-        for (player_id, hand) in self.strategy.hands.iteritems():
+        for (player_id, hand) in self.strategy.hands.items():
             if player_id != hinter_id:
                 h = self.hash(hand, player_id, hinter_id)
                 assert 0 <= h < self.modulo(hinter_id)
@@ -196,7 +196,7 @@ class SumBasedHintsManager(BaseHintsManager):
                 matching[(Action.COLOR, color)] = card_pos
         
         # analyze hints on numbers
-        for number in xrange(1, Card.NUM_NUMBERS+1):
+        for number in range(1, Card.NUM_NUMBERS+1):
             cards_pos = [card_pos for (card_pos, card) in enumerate(hand) if card is not None and card.matches(number=number)]
             if len(cards_pos) > 0:
                 # pick the rightmost
@@ -234,7 +234,7 @@ class SumBasedHintsManager(BaseHintsManager):
         matching = {}
         counter = 0
         
-        for player_id in xrange(self.num_players):
+        for player_id in range(self.num_players):
             if player_id == hinter_id:
                 # skip the hinter
                 continue
@@ -362,7 +362,7 @@ class ValueHintsManager(BaseHintsManager):
         """
         Choose all cards that receive hints (of the given type) from the given player in the given turn.
         """
-        return {target_id: self.choose_card(player_id, target_id, turn, hint_type) for target_id in xrange(self.num_players) if target_id != player_id and self.choose_card(player_id, target_id, turn, hint_type) is not None}
+        return {target_id: self.choose_card(player_id, target_id, turn, hint_type) for target_id in range(self.num_players) if target_id != player_id and self.choose_card(player_id, target_id, turn, hint_type) is not None}
     
     
     def infer_playable_cards(self, player_id, action):
@@ -390,25 +390,25 @@ class ValueHintsManager(BaseHintsManager):
         
         if hint_type == Action.NUMBER:
             # the alternative hint would have been on colors
-            visible_colors = set(card.color for (i, hand) in self.strategy.hands.iteritems() for card in hand if i != player_id and card is not None)   # numbers visible by me and by the hinter
+            visible_colors = set(card.color for (i, hand) in self.strategy.hands.items() for card in hand if i != player_id and card is not None)   # numbers visible by me and by the hinter
             if len(visible_colors) < Card.NUM_COLORS:
                 # maybe the hinter was forced to make his choice because the color he wanted was not available
                 return None
             
         else:
         # the alternative hint would have been on numbers
-            visible_numbers = set(card.number for (i, hand) in self.strategy.hands.iteritems() for card in hand if i != player_id and card is not None)   # numbers visible by me and by the hinter
+            visible_numbers = set(card.number for (i, hand) in self.strategy.hands.items() for card in hand if i != player_id and card is not None)   # numbers visible by me and by the hinter
             if len(visible_numbers) < Card.NUM_NUMBERS:
                 # maybe the hinter was forced to make his choice because the number he wanted was not available
                 return None
         
         
-        involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.iteritems() if i != player_id and i in cards_pos] + [self.strategy.hands[action.player_id][card_pos] for card_pos in action.cards_pos if (action.player_id not in cards_pos or card_pos != cards_pos[action.player_id])]
+        involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.items() if i != player_id and i in cards_pos] + [self.strategy.hands[action.player_id][card_pos] for card_pos in action.cards_pos if (action.player_id not in cards_pos or card_pos != cards_pos[action.player_id])]
         
         my_card_pos = cards_pos[self.id]
         num_playable = sum(1 for card in involved_cards if card.playable(self.strategy.board) and not self.is_duplicate(card))
         
-        alternative_involved_cards = [hand[alternative_cards_pos[i]] for (i, hand) in self.strategy.hands.iteritems() if i != player_id and i in alternative_cards_pos]
+        alternative_involved_cards = [hand[alternative_cards_pos[i]] for (i, hand) in self.strategy.hands.items() if i != player_id and i in alternative_cards_pos]
         alternative_my_card_pos = alternative_cards_pos[self.id]
         alternative_num_playable = sum(1 for card in alternative_involved_cards if card.playable(self.strategy.board) and not self.is_duplicate(card))
         
@@ -433,7 +433,7 @@ class ValueHintsManager(BaseHintsManager):
         # self.log("%r" % cards_pos)
         
         # update knowledge
-        for (target_id, card_pos) in cards_pos.iteritems():
+        for (target_id, card_pos) in cards_pos.items():
             kn = self.knowledge[target_id][card_pos]
             if hint_type == Action.COLOR:
                 kn.color = True
@@ -446,7 +446,7 @@ class ValueHintsManager(BaseHintsManager):
             my_card_pos = cards_pos[self.id]
             modulo = Card.NUM_NUMBERS if hint_type == Action.NUMBER else Card.NUM_COLORS
             
-            involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.iteritems() if i != player_id and i in cards_pos]
+            involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.items() if i != player_id and i in cards_pos]
             
             m = sum(card.number if hint_type == Action.NUMBER else self.COLORS_TO_NUMBERS[card.color] for card in involved_cards) + self.shift(action.turn)
             my_value = (n - m) % modulo
@@ -473,7 +473,7 @@ class ValueHintsManager(BaseHintsManager):
         """
         # maybe I wasn't given a hint because I didn't have the right cards
         # recall: the hint is given to the first suitable person after the one who gives the hint
-        for i in range(player_id + 1, self.num_players) + range(player_id):
+        for i in list(range(player_id + 1, self.num_players)) + list(range(player_id)):
             if i == action.player_id:
                 # reached hinted player
                 break
@@ -530,7 +530,7 @@ class ValueHintsManager(BaseHintsManager):
         
         # compute sum of visible cards in the given positions
         modulo = Card.NUM_NUMBERS if hint_type == Action.NUMBER else Card.NUM_COLORS
-        involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.iteritems() if i in cards_pos]
+        involved_cards = [hand[cards_pos[i]] for (i, hand) in self.strategy.hands.items() if i in cards_pos]
         assert all(card is not None for card in involved_cards)
         m = sum(card.number if hint_type == Action.NUMBER else self.COLORS_TO_NUMBERS[card.color] for card in involved_cards) + self.shift(turn)
         m %= modulo
@@ -553,7 +553,7 @@ class ValueHintsManager(BaseHintsManager):
         for hint_type in Action.HINT_TYPES:
             # compute which cards would be involved in this indirect hint
             cards_pos = self.choose_all_cards(self.id, self.strategy.turn, hint_type)
-            involved_cards = [self.strategy.hands[i][card_pos] for (i, card_pos) in cards_pos.iteritems()]
+            involved_cards = [self.strategy.hands[i][card_pos] for (i, card_pos) in cards_pos.items()]
             
             res = self.compute_hint_value(self.strategy.turn, hint_type)
             
@@ -565,7 +565,7 @@ class ValueHintsManager(BaseHintsManager):
                 # search for the first player with cards matching the hint
                 player_id = None
                 num_matches = None
-                for i in range(self.id + 1, self.num_players) + range(self.id):
+                for i in list(range(self.id + 1, self.num_players)) + list(range(self.id)):
                     hand = self.strategy.hands[i]
                     num_matches = 0
                     for card in hand:
@@ -599,11 +599,11 @@ class ValueHintsManager(BaseHintsManager):
                             )
         
         # choose between color and number
-        possibilities = {a: b for (a,b) in possibilities.iteritems() if b is not None}
+        possibilities = {a: b for (a,b) in possibilities.items() if b is not None}
         
 
         if len(possibilities) > 0:
-            score, action = sorted(possibilities.itervalues(), key = lambda x: x[0])[-1]
+            score, action = sorted(iter(possibilities.values()), key = lambda x: x[0])[-1]
             self.log("give value hint on %d cards with score %d, %d" % (score[2], score[0], score[1]))
             return action
         
@@ -676,7 +676,7 @@ class PlayabilityHintsManager(SumBasedHintsManager):
                     kn.non_playable = True
         
         # update knowledge of players different by me and the hinter
-        for (p_id, hand) in self.strategy.hands.iteritems():
+        for (p_id, hand) in self.strategy.hands.items():
             if p_id == hinter_id:
                 # skip the hinter
                 continue
@@ -783,7 +783,7 @@ class CardHintsManager(SumBasedHintsManager):
         
         if kn.color:
             # communicate the number
-            for number in xrange(1, Card.NUM_NUMBERS + 1):
+            for number in range(1, Card.NUM_NUMBERS + 1):
                 if counter >= self.modulo(hinter_id):
                     # reached maximum number of information available
                     break
@@ -806,7 +806,7 @@ class CardHintsManager(SumBasedHintsManager):
             fake_board = copy.copy(board)
             c = 0
             
-            while counter < self.modulo(hinter_id) and sum(Card.NUM_NUMBERS - n for n in fake_board.itervalues()) > 0:
+            while counter < self.modulo(hinter_id) and sum(Card.NUM_NUMBERS - n for n in fake_board.values()) > 0:
                 # pick next color
                 color = Card.COLORS[c % Card.NUM_COLORS]
                 c += 1
@@ -948,7 +948,7 @@ class CardHintsManager(SumBasedHintsManager):
         
         
         # update knowledge of players different by me and the hinter
-        for (player_id, hand) in self.strategy.hands.iteritems():
+        for (player_id, hand) in self.strategy.hands.items():
             if player_id == hinter_id:
                 # skip the hinter
                 continue

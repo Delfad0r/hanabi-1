@@ -5,7 +5,7 @@ import sys
 from collections import Counter
 from functools import total_ordering
 
-from action import Action
+from .action import Action
 
 
 @total_ordering
@@ -57,8 +57,8 @@ class CardAppearance:
         # same color and number
         return self.color == other.color and self.number == other.number
 
-    def __ne__(self, other):
-        return self != other
+    #def __ne__(self, other):
+    #    return self != other
     
     def __le__(self, other):
         return (self.color, self.number) < (other.color, other.number)
@@ -117,7 +117,7 @@ class CardAppearance:
         full_deck and discard_pile can be given either as lists or as Counters (more efficient).
         """
         # check that lower cards still exist
-        for number in xrange(board[self.color] + 1, self.number):
+        for number in range(board[self.color] + 1, self.number):
             if isinstance(full_deck, Counter):
                 copies_in_deck = full_deck[CardAppearance(color=self.color, number=number)]
             else:

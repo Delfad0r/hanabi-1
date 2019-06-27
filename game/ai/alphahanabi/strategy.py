@@ -148,13 +148,13 @@ class Strategy(BaseStrategy):
         self.deck_size = deck_size
         
         # for each of my card, store its possibilities
-        self.possibilities = [Counter(self.full_deck) for i in xrange(self.k)]
+        self.possibilities = [Counter(self.full_deck) for i in range(self.k)]
         
         # remove cards of other players from possibilities
         self.update_possibilities()
         
         # knowledge of all players
-        self.knowledge = [[Knowledge(color=False, number=False) for j in xrange(k)] for i in xrange(num_players)]
+        self.knowledge = [[Knowledge(color=False, number=False) for j in range(k)] for i in range(num_players)]
         
         # hints scheduler
         self.hints_scheduler = HintsScheduler(self)
@@ -165,7 +165,7 @@ class Strategy(BaseStrategy):
         Counter of all the cards visible by me.
         """
         res = Counter(self.discard_pile)
-        for hand in self.hands.itervalues():
+        for hand in self.hands.values():
             res += Counter(hand)
         
         return res
@@ -197,10 +197,10 @@ class Strategy(BaseStrategy):
         """
         possible_cards = Counter()
         for p in self.possibilities:
-            assert all(x > 0 for x in p.values())
+            assert all(x > 0 for x in list(p.values()))
             possible_cards |= p
         
-        new_possibilities = [set() for card_pos in xrange(self.k)]
+        new_possibilities = [set() for card_pos in range(self.k)]
         
         num_cards = len([x for x in self.my_hand if x is not None])
         assert num_cards <= self.k
@@ -210,7 +210,7 @@ class Strategy(BaseStrategy):
             # construct hand
             hand = copy.copy(self.my_hand)
             i = 0
-            for card_pos in xrange(self.k):
+            for card_pos in range(self.k):
                 if hand[card_pos] is not None:
                     hand[card_pos] = comb[i]
                     i += 1
@@ -238,7 +238,7 @@ class Strategy(BaseStrategy):
         return (self.id + 1) % self.num_players
     
     def other_players_id(self):
-        return [i for i in xrange(self.num_players) if i != self.id]
+        return [i for i in range(self.num_players) if i != self.id]
     
     
     def reset_knowledge(self, player_id, card_pos, new_card_exists):
@@ -246,13 +246,13 @@ class Strategy(BaseStrategy):
     
     
     def print_knowledge(self):
-        print "Knowledge"
-        for i in xrange(self.num_players):
-            print "Player %d:" % i,
-            for card_pos in xrange(self.k):
-                print self.knowledge[i][card_pos],
-            print
-        print
+        print("Knowledge")
+        for i in range(self.num_players):
+            print("Player %d:" % i, end=' ')
+            for card_pos in range(self.k):
+                print(self.knowledge[i][card_pos], end=' ')
+            print()
+        print()
 
     
     def feed_turn(self, player_id, action):
@@ -298,8 +298,8 @@ class Strategy(BaseStrategy):
         best_cards_pos = []
         best_relevant_ratio = 1.0
         
-        WEIGHT = {number: Card.NUM_NUMBERS + 1 - number for number in xrange(1, Card.NUM_NUMBERS + 1)}
-        best_relevant_weight = max(WEIGHT.itervalues())
+        WEIGHT = {number: Card.NUM_NUMBERS + 1 - number for number in range(1, Card.NUM_NUMBERS + 1)}
+        best_relevant_weight = max(WEIGHT.values())
         
         for (card_pos, p) in enumerate(self.possibilities):
             if len(p) > 0:
@@ -339,7 +339,7 @@ class Strategy(BaseStrategy):
         # in case of tie, prefer (in this order):
         # NUM_NUMBERS, 1, 2, 3, ..., NUM_NUMBERS-1 (weights are given accordingly)
         
-        WEIGHT = {number: Card.NUM_NUMBERS - number for number in xrange(1, Card.NUM_NUMBERS)}
+        WEIGHT = {number: Card.NUM_NUMBERS - number for number in range(1, Card.NUM_NUMBERS)}
         WEIGHT[Card.NUM_NUMBERS] = Card.NUM_NUMBERS
         
         tolerance = 1e-3
@@ -354,8 +354,8 @@ class Strategy(BaseStrategy):
                 for card in p:
                     fake_board = copy.copy(self.board)
                     fake_board[card.color] += 1
-                    for i in xrange(p[card]):
-                        num_playable.append(sum(1 for (player_id, hand) in self.hands.iteritems() for c in hand if c is not None and c.playable(fake_board)))
+                    for i in range(p[card]):
+                        num_playable.append(sum(1 for (player_id, hand) in self.hands.items() for c in hand if c is not None and c.playable(fake_board)))
                 
                 avg_num_playable = float(sum(num_playable)) / len(num_playable)
                 
@@ -387,7 +387,7 @@ class Strategy(BaseStrategy):
                 for card in p:
                     # simulate what happens if I play this card
                     best_score = 0
-                    for comb in itertools.product(range(self.k), repeat = self.last_turn - self.turn):
+                    for comb in itertools.product(list(range(self.k)), repeat = self.last_turn - self.turn):
                         turn = self.turn
                         board = copy.copy(self.board)
                         player_id = self.id
@@ -409,7 +409,7 @@ class Strategy(BaseStrategy):
                                 if c.playable(board):
                                     board[c.color] += 1
                         
-                        score = sum(board.itervalues())
+                        score = sum(board.values())
                         best_score = max(score, best_score) # assume that the other players play optimally! :)
                     
                     # self.log("simulation for card %r in position %d gives best score %d" % (card, card_pos, best_score))

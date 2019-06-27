@@ -41,9 +41,9 @@ if __name__ == "__main__":
     
     results = []
 
-    print "Starting %d simulations with %d players..." % (num_simulations, num_players)
-    for i in xrange(num_simulations):
-        print >> sys.stderr, i,
+    print("Starting %d simulations with %d players..." % (num_simulations, num_players))
+    for i in range(num_simulations):
+        print(i, end=' ', file=sys.stderr)
         game = Game(
                 num_players=num_players,
                 ai=ai,
@@ -58,21 +58,21 @@ if __name__ == "__main__":
             pass
         statistics = game.statistics
         results.append(statistics)
-    print
+    print()
 
     scores = [statistics.score for statistics in results]
 
-    print "Results"
-    print sorted(scores)
-    print "Number of players:", num_players
-    print "Average result:", float(sum(scores)) / len(scores)
-    print "Best result:", max(scores)
-    print "Worst result:", min(scores)
-    print "Rate of perfect scores: %.2f %%" % (float(scores.count(30)) / len(scores) * 100.0)
+    print("Results")
+    print(sorted(scores))
+    print("Number of players:", num_players)
+    print("Average result:", float(sum(scores)) / len(scores))
+    print("Best result:", max(scores))
+    print("Worst result:", min(scores))
+    print("Rate of perfect scores: %.2f %%" % (float(scores.count(30)) / len(scores) * 100.0))
 
     lives = [statistics.lives for statistics in results]
-    print "Average number of remaining lives:", float(sum(lives)) / len(lives)
+    print("Average number of remaining lives:", float(sum(lives)) / len(lives))
 
     num_turns = [statistics.num_turns for statistics in results]
-    print "Average number of turns:", float(sum(num_turns)) / len(num_turns)
+    print("Average number of turns:", float(sum(num_turns)) / len(num_turns))
 

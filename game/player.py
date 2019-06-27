@@ -3,8 +3,8 @@
 
 import sys
 
-from card import Card, get_appearance
-from action import Action
+from .card import Card, get_appearance
+from .action import Action
 
 import importlib
 
@@ -30,7 +30,7 @@ class Player:
         self.ai_params = ai_params
         
         # create strategy object
-        Strategy = __import__('ai.%s.strategy' % self.ai, globals(), locals(), fromlist=['Strategy'], level=-1).Strategy
+        Strategy = __import__('ai.%s.strategy' % self.ai, globals(), locals(), fromlist=['Strategy'], level=1).Strategy
         
         self.strategy = Strategy(verbose=strategy_log, params=ai_params)
     
@@ -62,7 +62,7 @@ class Player:
                 board = self.game.board,
                 deck_type = self.game.deck_type,
                 my_hand = get_appearance(self.hand, hide=True),
-                hands = {i: get_appearance(player.hand) for (i, player) in self.other_players().iteritems()},
+                hands = {i: get_appearance(player.hand) for (i, player) in self.other_players().items()},
                 discard_pile = get_appearance(self.game.discard_pile),
                 deck_size = len(self.game.deck)
             )
@@ -76,7 +76,7 @@ class Player:
                 hints = self.game.hints,
                 lives = self.game.lives,
                 my_hand = get_appearance(self.hand, hide=True),
-                hands = {i: get_appearance(player.hand) for (i, player) in self.other_players().iteritems()},
+                hands = {i: get_appearance(player.hand) for (i, player) in self.other_players().items()},
                 discard_pile = get_appearance(self.game.discard_pile),
                 turn = self.game.get_current_turn(),
                 last_turn = self.game.last_turn,

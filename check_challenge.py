@@ -8,7 +8,7 @@ Ideally, it should be part of some test suite (maybe).
 
 import sys
 
-from game.game import Game
+from .game.game import Game
 
 SCORES = {
     '2016-07-21': {
@@ -68,8 +68,8 @@ DIFFICULTIES = ('moderate', 'hard', 'hardest')
 
 difference = 0
 
-for (date, stats) in SCORES.iteritems():
-    for (i, scores) in stats.iteritems():
+for (date, stats) in SCORES.items():
+    for (i, scores) in stats.items():
         for (j, score) in enumerate(scores):
             game = Game(
                 num_players=5,
@@ -88,11 +88,11 @@ for (date, stats) in SCORES.iteritems():
             diff = statistics.score - score
             difference += abs(diff)
             
-            print "%s Game %d %s:" % (date, i, DIFFICULTIES[j])
-            print "Old score: %d (%d)" % (score, diff)
-            print statistics
+            print("%s Game %d %s:" % (date, i, DIFFICULTIES[j]))
+            print("Old score: %d (%d)" % (score, diff))
+            print(statistics)
 
 
-print
-print "Difference: %d" % difference
+print()
+print("Difference: %d" % difference)
 

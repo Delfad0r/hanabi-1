@@ -6,10 +6,10 @@ import random
 from collections import namedtuple
 import copy
 
-from card import Card
-from player import Player
-from action import Action
-from deck import DECKS, DECK55, DECK50
+from .card import Card
+from .player import Player
+from .action import Action
+from .deck import DECKS, DECK55, DECK50
 
 
 Turn = namedtuple("Turn", "player action number")
@@ -66,11 +66,11 @@ class Game:
         self.players = [Player(
                 id = i,
                 game = self,
-                hand = [self.draw_card_from_deck() for i in xrange(self.k)],
+                hand = [self.draw_card_from_deck() for i in range(self.k)],
                 ai = self.ai,
                 ai_params = self.ai_params,
                 strategy_log = self.strategy_log
-            ) for i in xrange(self.num_players)]
+            ) for i in range(self.num_players)]
         
         # set number of hints and lives
         self.hints = self.INITIAL_HINTS
@@ -100,7 +100,7 @@ class Game:
         return len(self.turns)
     
     def get_current_score(self):
-        return sum(self.board.itervalues())
+        return sum(self.board.values())
     
     def get_current_status(self):
         return Status(
@@ -197,51 +197,51 @@ class Game:
     
     def log_turn(self, turn, player):
         action = turn.action
-        print "Turn %d (player %d):" % (turn.number, player.id),
+        print("Turn %d (player %d):" % (turn.number, player.id), end=' ')
         if action.type in [Action.PLAY, Action.DISCARD]:
-            print action.type, self.discard_pile[-1], "(card %d)," % action.card_pos,
-            print "draw %r" % player.hand[action.card_pos]
+            print(action.type, self.discard_pile[-1], "(card %d)," % action.card_pos, end=' ')
+            print("draw %r" % player.hand[action.card_pos])
         
         elif action.type == Action.HINT:
-            print action.type,
-            print "to player %d," % action.player_id,
-            print "cards", action.cards_pos,
-            print "are",
-            print action.value
+            print(action.type, end=' ')
+            print("to player %d," % action.player_id, end=' ')
+            print("cards", action.cards_pos, end=' ')
+            print("are", end=' ')
+            print(action.value)
         
-        print
+        print()
     
     def log_turn_short(self, turn, player):
-        print "Turn %d (player %d): %s" % (self.get_current_turn(), player.id, turn.action.type)
+        print("Turn %d (player %d): %s" % (self.get_current_turn(), player.id, turn.action.type))
     
     
     def log_status(self):
         from termcolor import colored
         
-        print "Hands:"
+        print("Hands:")
         for player in self.players:
-            print "    Player %d" % player.id, player.hand
-        print "Board:",
+            print("    Player %d" % player.id, player.hand)
+        print("Board:", end=' ')
         for color in Card.COLORS:
-            print colored("%d" % self.board[color], Card.PRINTABLE_COLORS[color]),
-        print
-        print "Hints: %d    Lives: %d    Deck: %d    Score: %d" % (self.hints, self.lives, len(self.deck), self.get_current_score())
+            print(colored("%d" % self.board[color], Card.PRINTABLE_COLORS[color]), end=' ')
+        print()
+        print("Hints: %d    Lives: %d    Deck: %d    Score: %d" % (self.hints, self.lives, len(self.deck), self.get_current_score()))
         
         if self.last_round:
-            print "This is the last round (player %d plays last on turn %d)" % (self.last_player.id, self.last_turn)
+            print("This is the last round (player %d plays last on turn %d)" % (self.last_player.id, self.last_turn))
         else:
-            print
+            print()
         
-        print
+        print()
     
     def log_status_short(self):
-        print "Hints: %d    Lives: %d    Deck: %d    Score: %d" % (self.hints, self.lives, len(self.deck), self.get_current_score())
+        print("Hints: %d    Lives: %d    Deck: %d    Score: %d" % (self.hints, self.lives, len(self.deck), self.get_current_score()))
     
 
     def log_deck(self):
-        print "Deck (last card on top):"
-        print self.deck
-        print
+        print("Deck (last card on top):")
+        print(self.deck)
+        print()
 
 
     def dump_deck(self, filename):
@@ -251,7 +251,7 @@ class Game:
         with open(filename, "w") as file:
             # dump deck
             for card in self.deck:
-                print >> file, "%d %s %d" % (card.number, card.color, card.id)
+                print("%d %s %d" % (card.number, card.color, card.id), file=file)
     
     
     def get_deck_description(self):

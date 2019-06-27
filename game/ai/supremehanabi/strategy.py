@@ -52,7 +52,7 @@ class Strategy(BaseStrategy):
         self.personal_knowledge = Knowledge(self, Knowledge.PERSONAL, id)
         
         # public knowledge
-        self.public_knowledge = [Knowledge(self, Knowledge.PUBLIC, i) for i in xrange(num_players)]
+        self.public_knowledge = [Knowledge(self, Knowledge.PUBLIC, i) for i in range(num_players)]
         
         # all knowledge
         self.all_knowledge = self.public_knowledge + [self.personal_knowledge]
@@ -93,7 +93,7 @@ class Strategy(BaseStrategy):
         Counter of all the cards visible by me.
         """
         res = Counter(self.discard_pile)
-        for hand in self.hands.itervalues():
+        for hand in self.hands.values():
             res += Counter(hand)
         
         return res
@@ -105,7 +105,7 @@ class Strategy(BaseStrategy):
     def other_players_id(self, exclude=None):
         if exclude is None:
             exclude = self.id
-        return [i for i in xrange(self.num_players) if i != exclude]
+        return [i for i in range(self.num_players) if i != exclude]
     
     
     def feed_turn(self, player_id, action):
@@ -147,7 +147,7 @@ class Strategy(BaseStrategy):
         Choose action for this turn.
         """
         # check for playable cards in my hand
-        for card_pos in xrange(self.k):
+        for card_pos in range(self.k):
             if self.personal_knowledge.playable(card_pos):
                 return PlayAction(card_pos=card_pos)
         
@@ -173,7 +173,7 @@ class Strategy(BaseStrategy):
             """
         
         # discard card
-        for card_pos in xrange(self.k):
+        for card_pos in range(self.k):
             if self.my_hand[card_pos] is not None:
                 return DiscardAction(card_pos=card_pos)
 

@@ -11,7 +11,7 @@ def standard_deck(include_rainbow=True):
         if not include_rainbow and color == Card.RAINBOW:
             continue
         
-        for number in xrange(1, Card.NUM_NUMBERS + 1):
+        for number in range(1, Card.NUM_NUMBERS + 1):
             if color == Card.RAINBOW:
                 quantity = 1
             elif number == 1:
@@ -23,7 +23,7 @@ def standard_deck(include_rainbow=True):
             else:
                 raise Exception("Unknown card parameters.")
             
-            for i in xrange(quantity):
+            for i in range(quantity):
                 deck.append(Card(id, color, number))
                 id += 1
     

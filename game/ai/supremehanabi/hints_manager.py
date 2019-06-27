@@ -67,7 +67,7 @@ class Meaning(dict):
     
     def __add__(self, other):
         return Meaning(
-            (card_pos, cards | other[card_pos]) for (card_pos, cards) in self.iteritems() if card_pos in other
+            (card_pos, cards | other[card_pos]) for (card_pos, cards) in self.items() if card_pos in other
         )
     
     def __radd__(self, other):
@@ -83,8 +83,8 @@ def hint_informations(k):
     """
     cards_per_player = Game.CARDS_PER_PLAYER[k]
     
-    for primary in xrange(2*(k-1)):
-        for secondary in xrange(cards_per_player):
+    for primary in range(2*(k-1)):
+        for secondary in range(cards_per_player):
             yield HintInformation(k, primary, secondary)
 
 
@@ -136,17 +136,17 @@ class HintsManager:
         
         # assign ranks to each position
         # higher rank makes it more likely that we want to give information about that card
-        ranks = [0 for card_pos in xrange(self.k)]
+        ranks = [0 for card_pos in range(self.k)]
         
         ### ranks are as follows ###
-        for card_pos in xrange(self.k):
+        for card_pos in range(self.k):
             o = overview[card_pos]
             
             if knowledge.hand()[card_pos] is None:
                 # 0: no card in the given position
                 rank = 0
             
-            elif sum(o.itervalues()) == 1:
+            elif sum(o.values()) == 1:
                 # 1: card is known exactly
                 rank = 1
             
@@ -173,14 +173,14 @@ class HintsManager:
         
         meanings = OrderedDict((information, Meaning()) for information in hint_informations(self.k))
         
-        if sum(o.itervalues()) <= self.num_primary:
+        if sum(o.values()) <= self.num_primary:
             # give one possibility to each primary slot
             
-            p_list = knowledge.possibilities[card_pos].keys()
+            p_list = list(knowledge.possibilities[card_pos].keys())
             
-            for primary in xrange(self.num_primary):
+            for primary in range(self.num_primary):
                 cards = set([p_list[primary]]) if primary < len(p_list) else set()
-                for secondary in xrange(self.num_secondary):
+                for secondary in range(self.num_secondary):
                     meanings[HintInformation(self.k, primary, secondary)][card_pos] = cards
         
         else:
@@ -201,9 +201,9 @@ class HintsManager:
         if meanings is None:
             meanings = self.compute_information_meanings(player_id)
         
-        for (information, meaning) in meanings.iteritems():
+        for (information, meaning) in meanings.items():
             # does this meaning apply?
-            if all(hand[card_pos] is None or hand[card_pos] in cards for card_pos, cards in meaning.iteritems()):
+            if all(hand[card_pos] is None or hand[card_pos] in cards for card_pos, cards in meaning.items()):
                 # yes
                 return information
         
@@ -256,7 +256,7 @@ class HintsManager:
         
         # deduce things on my hand and update personal knowledge (if I am not the hinter)
         if hinter_id != self.id:
-            my_informations = [information_sum - sum(visible_informations.itervalues()) for information_sum in informations_sum]    # the possible informations about my hand
+            my_informations = [information_sum - sum(visible_informations.values()) for information_sum in informations_sum]    # the possible informations about my hand
             
             my_meaning = sum(players_to_meanings[self.id][information] for information in my_informations)
             
@@ -273,7 +273,7 @@ class HintsManager:
             else:
                 # only primary information is public!
                 primary = visible_informations[player_id].primary if player_id != self.id else my_informations[0].primary
-                meaning = sum(players_to_meanings[player_id][HintInformation(self.k, primary, secondary)] for secondary in xrange(self.num_secondary))
+                meaning = sum(players_to_meanings[player_id][HintInformation(self.k, primary, secondary)] for secondary in range(self.num_secondary))
                 
                 # update public knowledge
                 self.strategy.public_knowledge[player_id].update_with_meaning(meaning)

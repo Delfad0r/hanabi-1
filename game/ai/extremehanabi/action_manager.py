@@ -113,20 +113,20 @@ class ActionManager(object):
         discard_pile = Counter(self.strategy.discard_pile)
         
         for color in Card.COLORS:
-            for number in xrange(1, Card.NUM_NUMBERS+1):
-                for player in range(self.id, self.num_players) + range(self.id):
+            for number in range(1, Card.NUM_NUMBERS+1):
+                for player in list(range(self.id, self.num_players)) + list(range(self.id)):
                     if player == self.id:
                         # my possibilities
                         for (card_pos, p) in enumerate(self.possibilities):
                             state.append(1.0 if any(card.matches(color=color, number=number) for card in p) else 0.0)
                         
                         # (fake) my cards -- needed to fill the tensor's shape
-                        for card_pos in xrange(self.k):
+                        for card_pos in range(self.k):
                             state.append(0.0)
                     
                     else:
                         # others' possibilities
-                        for card_pos in xrange(self.k):
+                        for card_pos in range(self.k):
                             state.append(1.0 if self.knowledge[player][card_pos].compatible(
                                 self.strategy.hands[player][card_pos],
                                 color,
@@ -200,8 +200,8 @@ class ActionManager(object):
         
         import random
         if random.random() < 0.01:
-            print
-            print probs
+            print()
+            print(probs)
         
         self.log("Probabilities: %r" % list(probs.data))
         self.log("Value: %r" % float(state_value.data))
@@ -223,7 +223,7 @@ class ActionManager(object):
         else:
             chosen_action = (self.HINT, None)
         
-        action_mask = Variable(torch.ByteTensor([1 if i==action else 0 for i in xrange(self.NUM_ACTIONS)]))
+        action_mask = Variable(torch.ByteTensor([1 if i==action else 0 for i in range(self.NUM_ACTIONS)]))
         self.model.saved_action = SavedAction(state_value, chosen_action, state, action_mask)
         return chosen_action
         
